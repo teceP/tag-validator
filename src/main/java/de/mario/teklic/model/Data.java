@@ -4,11 +4,11 @@ public class Data {
 
     private String URL;
 
-    private String result;
+    private int cases;
 
-    public Data(String URL, String result){
+    public Data(String URL, int cases){
         this.URL = URL;
-        this.result = result;
+        this.cases = cases;
     }
 
     public String getURL() {
@@ -19,11 +19,12 @@ public class Data {
         this.URL = URL;
     }
 
-    public String getResult() {
-        return result;
+    public int getCases() {
+        return cases;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setCases(int cases) {
+        this.cases = cases;
     }
+
 }

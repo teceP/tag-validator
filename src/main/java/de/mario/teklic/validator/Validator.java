@@ -2,6 +2,7 @@ package de.mario.teklic.validator;
 
 import com.google.gson.Gson;
 import de.mario.teklic.model.Data;
+import de.mario.teklic.model.Result;
 import de.mario.teklic.ssl.SSLHelper;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,69 +24,63 @@ public class Validator {
         this.urls = urls;
     }
 
-
-    /**
-     * wenn es in einem doc. x target="_blank" gibt, muss es auch x noopener & x norefferer geben
-     */
-
-    public void validate(String attr, String val) {
+    public Result validate(String attr, String val) {
         int line = 50;
         int count = 0;
         int errorCount = 0;
+        List<Data> dataList = new ArrayList<>();
 
         if (urls != null || urls.size() > 0) {
-            System.out.println("Searching for attr '" + attr + "' with val '" + val + "'. URL List size: " + (urls.size()+1) + ".");
-            List<Data> dataList = new ArrayList<>();
-            try {
-                for (String url : urls) {
-                    if(count == line){
+            System.out.println("Searching for attr '" + attr + "' with val '" + val + "'. URL List size: " + (urls.size() + 1) + ".");
+
+            for (String url : urls) {
+                try {
+                    if (count == line) {
                         line += 50;
-                        System.out.println(count + " urls checked. " + (dataList.size() - errorCount) + " cases found. " + ((urls.size()) - count) + " left...");
-                        System.out.println("Next url: " + url);
+                        this.message(url, dataList.size(), errorCount, count);
                     }
                     count++;
 
                     Document doc = SSLHelper.getConnection(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6").get();
 
                     /**
-                     * _blank
+                     * Find tags
                      */
                     Elements targetBlank = doc.select("a[target=_blank]");
-                    Elements noOpNoRef = new Elements();
+                    Elements cases = new Elements();
                     for (Element target : targetBlank) {
                         if (!target.toString().contains(attr + "=\"" + val + "\"")) {
-                            noOpNoRef.add(target);
+                            cases.add(target);
                         }
                     }
 
                     /**
-                     * Nicht alle oder keiner hat noopener, norefferer
+                     * Nicht alle oder keiner hat val
                      */
-                    if (noOpNoRef.size() <= targetBlank.size()) {
-                        dataList.add(new Data(url, attr + "." + val + " found: " + (noOpNoRef.size() + 1)));
+                    if (cases.size() <= targetBlank.size()) {
+                        dataList.add(new Data(url, cases.size()));
                     }
+                } catch (IOException e) {
+                    System.err.println("Error connecting url: " + url);
+                    errorCount++;
                 }
-
-                if (dataList.size() > 0) {
-                    System.out.println("Saving data to json file... " + (dataList.size() - errorCount) + " cases found. " + errorCount + " errors while connecting to the urls.");
-                    this.safeFile(dataList);
-                }else{
-                    System.out.println("No cases found!");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                errorCount++;
-                dataList.add(new Data("Exception: ", e.getMessage()));
             }
         } else {
             System.out.println("No urls.");
         }
+
+        return new Result(dataList, errorCount);
     }
 
-    public void safeFile(List<Data> dataList) throws IOException {
-        FileWriter file = new FileWriter("_cases_found_test" + ".json");
-        file.write(new Gson().toJson(dataList));
+    public void safeFile(Result result) throws IOException {
+        FileWriter file = new FileWriter("cases_found_" + result.getDataList().size() + ".json");
+        file.write(new Gson().toJson(result));
         file.flush();
         file.close();
+    }
+
+    public void message(String currentUrl, int cases, int errorCount, int count) {
+        System.out.println(count + " urls checked. " + (cases - errorCount) + " cases found. " + ((urls.size()) - count) + " left...");
+        System.out.println("Next url: " + currentUrl);
     }
 }

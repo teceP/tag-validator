@@ -60,11 +60,6 @@ public class Crawler {
                 }
                 Elements linksOnPage = document.select("a[href]");
 
-                /**
-                 * Filters:
-                 *
-                 */
-
                 Predicate<Element> goodDomain = e -> e.attr("abs:href").contains(domain);
                 Predicate<Element> noEmail = e -> !e.attr("abs:href").contains("@");
                 Predicate<Element> noMP4 = e -> !e.attr("abs:href").contains(".mp4");
