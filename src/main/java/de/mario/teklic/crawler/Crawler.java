@@ -17,15 +17,19 @@ public class Crawler {
 
     private String domain;
     private String startLink;
+    private String dependingTag;
+    private String lookingForAll;
     private URL startURL;
     private List<String> links;
     private int size = 50;
     private int max;
     private int depth;
 
-    public Crawler(String startLink, String URL, int max, int depth) throws MalformedURLException {
+    public Crawler(String startLink, String URL, int max, int depth, String dependingTag, String lookingForAll) throws MalformedURLException {
         this.startLink = startLink;
         this.startURL = new URL(startLink);
+        this.dependingTag = dependingTag;
+        this.lookingForAll = lookingForAll;
         this.domain = URL;
         this.links = new ArrayList<>();
         this.max = max;
@@ -58,21 +62,21 @@ public class Crawler {
                 } catch (IllegalArgumentException ie) {
                     System.err.println(URL);
                 }
-                Elements linksOnPage = document.select("a[href]");
+                Elements linksOnPage = document.select(dependingTag+"[" + this.lookingForAll + "]");
 
-                Predicate<Element> goodDomain = e -> e.attr("abs:href").contains(domain);
-                Predicate<Element> noEmail = e -> !e.attr("abs:href").contains("@");
-                Predicate<Element> noMP4 = e -> !e.attr("abs:href").contains(".mp4");
-                Predicate<Element> noJPG = e -> !e.attr("abs:href").contains(".jpg");
-                Predicate<Element> noPDF = e -> !e.attr("abs:href").contains(".pdf");
-                Predicate<Element> noEN = e -> !e.attr("abs:href").contains("/EN/");
-                Predicate<Element> noFR = e -> !e.attr("abs:href").contains("/FR/");
+                Predicate<Element> goodDomain = e -> e.attr("abs:" + this.lookingForAll).contains(domain);
+                Predicate<Element> noEmail = e -> !e.attr("abs:" + this.lookingForAll).contains("@");
+                Predicate<Element> noMP4 = e -> !e.attr("abs:" + this.lookingForAll).contains(".mp4");
+                Predicate<Element> noJPG = e -> !e.attr("abs:" + this.lookingForAll).contains(".jpg");
+                Predicate<Element> noPDF = e -> !e.attr("abs:" + this.lookingForAll).contains(".pdf");
+                Predicate<Element> noEN = e -> !e.attr("abs:" + this.lookingForAll).contains("/EN/");
+                Predicate<Element> noFR = e -> !e.attr("abs:" + this.lookingForAll).contains("/FR/");
 
                 List<String> filtered = linksOnPage
                         .stream()
                         .distinct()
                         .filter(goodDomain.and(noEmail.and(noMP4).and(noJPG).and(noPDF).and(noEN).and(noFR)))
-                        .map(e -> e.attr("abs:href"))
+                        .map(e -> e.attr("abs:" + this.lookingForAll))
                         .collect(Collectors.toList());
 
                 filtered = this.eliminateCovered(filtered, depth);

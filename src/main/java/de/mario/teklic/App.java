@@ -20,6 +20,7 @@ public class App {
         String testing_Val = "";
         int maxPages = -2;
         int maxDepth = -2;
+        String lookingForAll = "";
 
         try {
 
@@ -71,6 +72,11 @@ public class App {
                 maxDepth = 500;
             }
             System.out.println("Max. pages: " + maxPages);
+
+            //lookingForAll: example href
+            lookingForAll = args[8];
+            System.out.println("Looking for all: " + lookingForAll);
+
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {
             System.out.println("Arguments needed.");
             printHelp();
@@ -81,7 +87,7 @@ public class App {
 
         System.out.println("Crawling...");
 
-        Crawler crawler = new Crawler(url, domain, maxPages, maxDepth);
+        Crawler crawler = new Crawler(url, domain, maxPages, maxDepth, depend_Tag, lookingForAll);
         List<String> urls = crawler.start();
 
         System.out.println("Found '" + (urls.size() + 1) + "' pages.");
