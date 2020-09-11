@@ -11,7 +11,7 @@ The tag-validator has a crawler inside, which looks for all avaiable URLs on a w
 The depth and the amount of pages is adjustable with arguments.
 
 Example for noopener norefferer: 
-* "https://www.bmwi.de/Navigation/DE/Home/home.html" a target "_blank" rel "noopener norefferer" 250 3 href
+* "https://www.a.url/thema/topic/hello" a target "_blank" rel "noopener norefferer" 250 3 href
 * a = a-tag
 * target = looking for attribute
 * "_blank" = looking for value
