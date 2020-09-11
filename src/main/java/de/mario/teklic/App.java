@@ -10,30 +10,83 @@ import java.util.List;
 
 public class App {
     public static void main(String[] args) throws IOException {
+
+        String domain = "";
+        String url = "";
+        String depend_Tag = "";
+        String depend_Attr = "";
+        String depend_Val = "";
+        String testing_Attr = "";
+        String testing_Val = "";
+        int maxPages = -2;
+        int maxDepth = -2;
+
         try {
-            args[0].length();
-            args[1].length();
-            args[2].length();
-            args[3].length();
-            args[4].length();
+
+            /**
+             * Comments are examples for orientation.
+             */
+
+            //Start URL
+            url = args[0];
+            System.out.println("URL: " + url);
+            domain = new URL(url).getHost();
+            System.out.println("Domain: " + domain);
+
+            //Depending on
+            //tag - a, div, img, ...
+            depend_Tag = args[1];
+            System.out.println("Depending Tag: " + depend_Tag);
+
+            //attr title, target, ...
+            depend_Attr = args[2];
+            System.out.println("Depending Attribute: " + depend_Attr);
+
+            //val
+            depend_Val = args[3];
+            System.out.println("Depending Value: " + depend_Val);
+
+            //Testing for
+            //attr rel
+            testing_Attr = args[4];
+            System.out.println("Testing Attribute: " + testing_Attr);
+
+            //val "noopener norefferer
+            testing_Val = args[5];
+            System.out.println("Testing Value: " + testing_Val);
+
+            //Max. pages
+            maxPages = Integer.parseInt(args[6]);
+            //Max. depth
+            maxDepth = Integer.parseInt(args[7]);
+
+            if(maxDepth == -2){
+                System.err.println("WARNING: No max depth argument found!" + System.lineSeparator() + "Default values: max Depth '3'.");
+                maxDepth = 3;
+            }
+            System.out.println("Max. searching depth: " + maxDepth);
+
+            if(maxPages == -2){
+                System.err.println("WARNING: No max depth argument found!" + System.lineSeparator() + "Default values: max Pages '500'.");
+                maxDepth = 500;
+            }
+            System.out.println("Max. pages: " + maxPages);
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException) {
             System.out.println("Arguments needed.");
             printHelp();
             System.exit(0);
         }
 
-        String domain = new URL(args[0]).getHost();
-
-        printArguments(args, domain);
+        //printArguments(args, domain);
 
         System.out.println("Crawling...");
 
-        Crawler crawler = new Crawler(args[0], domain, Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+        Crawler crawler = new Crawler(url, domain, maxPages, maxDepth);
         List<String> urls = crawler.start();
 
         System.out.println("Found '" + (urls.size() + 1) + "' pages.");
 
-        Validator validator = new Validator();
+        Validator validator = new Validator(depend_Tag, depend_Attr, depend_Val);
         validator.init(urls);
 
         System.out.println("Validating...");
@@ -50,24 +103,6 @@ public class App {
             System.out.println("No cases where found!");
         }else{
             System.err.println("Error: result is null!");
-        }
-    }
-
-    public static void printArguments(String[] args, String domain) {
-        System.out.println("URL: " + args[0]);
-        System.out.println("Domain: " + domain);
-        System.out.println("Attribute: '" + args[1] + "'");
-        System.out.println("Key: '" + args[2] + "'");
-
-        if (Integer.parseInt(args[3]) == 0) {
-            System.out.println("Max subsites: no limit");
-        } else {
-            System.out.println("Max subsites: " + args[3]);
-        }
-        if (Integer.parseInt(args[4]) == 0) {
-            System.out.println("Max depth: no limit");
-        } else {
-            System.out.println("Max depth: " + args[4]);
         }
     }
 

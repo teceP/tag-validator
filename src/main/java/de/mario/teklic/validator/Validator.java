@@ -17,7 +17,12 @@ public class Validator {
 
     private List<String> urls;
 
-    public Validator() {
+    private String dependingTag, dependingAttr, dependingVal;
+
+    public Validator(String dependingTag, String dependingAttr, String dependingVal) {
+        this.dependingTag = dependingTag;
+        this.dependingAttr = dependingAttr;
+        this.dependingVal = dependingVal;
     }
 
     public void init(List<String> urls) {
@@ -46,7 +51,7 @@ public class Validator {
                     /**
                      * Find tags
                      */
-                    Elements targetBlank = doc.select("a[target=_blank]");
+                    Elements targetBlank = doc.select(dependingTag + "[" + dependingAttr + "=" + dependingVal + "]");
                     Elements cases = new Elements();
                     for (Element target : targetBlank) {
                         if (!target.toString().contains(attr + "=\"" + val + "\"")) {
