@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import de.mario.teklic.model.Data;
 import de.mario.teklic.model.Result;
 import de.mario.teklic.ssl.SSLHelper;
+import org.ini4j.Profile;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -13,30 +14,36 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.mario.teklic.arguments.Arguments.*;
+
 public class Validator {
 
     private List<String> urls;
 
     private String dependingTag, dependingAttr, dependingVal;
 
-    public Validator(String dependingTag, String dependingAttr, String dependingVal) {
-        this.dependingTag = dependingTag;
-        this.dependingAttr = dependingAttr;
-        this.dependingVal = dependingVal;
+    private String testingAttr, testingVal;
+
+    public Validator(Profile.Section arguments){
+        this.dependingTag = arguments.get(DEPEND_TAG);
+        this.dependingAttr = arguments.get(DEPEND_ATTR);
+        this.dependingVal = arguments.get(DEPEND_VAL);
     }
 
     public void init(List<String> urls) {
         this.urls = urls;
     }
 
-    public Result validate(String attr, String val) {
+    public Result validate(Profile.Section testingArgs) {
+        this.testingAttr = testingArgs.get(TESTING_ATTR);
+        this.testingVal = testingArgs.get(TESTING_VAL);
         int line = 50;
         int count = 0;
         int errorCount = 0;
         List<Data> dataList = new ArrayList<>();
 
         if (urls != null || urls.size() > 0) {
-            System.out.println("Searching for attr '" + attr + "' with val '" + val + "'. URL List size: " + (urls.size() + 1) + ".");
+            System.out.println("Searching for attr '" + testingAttr + "' with val '" + testingVal + "'. URL List size: " + (urls.size() + 1) + ".");
 
             for (String url : urls) {
                 try {
@@ -54,7 +61,7 @@ public class Validator {
                     Elements targetBlank = doc.select(dependingTag + "[" + dependingAttr + "=" + dependingVal + "]");
                     Elements cases = new Elements();
                     for (Element target : targetBlank) {
-                        if (!target.toString().contains(attr + "=\"" + val + "\"")) {
+                        if (!target.toString().contains(testingAttr + "=\"" + testingVal + "\"")) {
                             cases.add(target);
                         }
                     }

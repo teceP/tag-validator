@@ -1,5 +1,6 @@
 package de.mario.teklic.crawler;
 
+import org.ini4j.Profile;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,27 +14,27 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static de.mario.teklic.arguments.Arguments.*;
+
 public class Crawler {
 
     private String domain;
     private String startLink;
-    private String dependingTag;
-    private String lookingForAll;
-    private URL startURL;
+    private String lookingForAllTag;
+    private String lookingForAllAttr;
     private List<String> links;
     private int size = 50;
     private int max;
     private int depth;
 
-    public Crawler(String startLink, String URL, int max, int depth, String dependingTag, String lookingForAll) throws MalformedURLException {
-        this.startLink = startLink;
-        this.startURL = new URL(startLink);
-        this.dependingTag = dependingTag;
-        this.lookingForAll = lookingForAll;
-        this.domain = URL;
+    public Crawler(Profile.Section urlArgs, Profile.Section maxArgs, Profile.Section lookingArgs) throws MalformedURLException {
+        this.startLink = urlArgs.get(URL);
+        this.lookingForAllTag = lookingArgs.get(LOOKING_FOR_TAG);
+        this.lookingForAllAttr = lookingArgs.get(LOOKING_FOR_ATTR);
+        this.domain = new URL(startLink).getHost();
         this.links = new ArrayList<>();
-        this.max = max;
-        this.depth = depth;
+        this.max = Integer.parseInt(maxArgs.get(MAX_PAGES));
+        this.depth = Integer.parseInt(maxArgs.get(MAX_DEPTH));
     }
 
     public List<String> start(){
@@ -62,21 +63,21 @@ public class Crawler {
                 } catch (IllegalArgumentException ie) {
                     System.err.println(URL);
                 }
-                Elements linksOnPage = document.select(dependingTag+"[" + this.lookingForAll + "]");
+                Elements linksOnPage = document.select(this.lookingForAllTag+"[" + this.lookingForAllAttr + "]");
 
-                Predicate<Element> goodDomain = e -> e.attr("abs:" + this.lookingForAll).contains(domain);
-                Predicate<Element> noEmail = e -> !e.attr("abs:" + this.lookingForAll).contains("@");
-                Predicate<Element> noMP4 = e -> !e.attr("abs:" + this.lookingForAll).contains(".mp4");
-                Predicate<Element> noJPG = e -> !e.attr("abs:" + this.lookingForAll).contains(".jpg");
-                Predicate<Element> noPDF = e -> !e.attr("abs:" + this.lookingForAll).contains(".pdf");
-                Predicate<Element> noEN = e -> !e.attr("abs:" + this.lookingForAll).contains("/EN/");
-                Predicate<Element> noFR = e -> !e.attr("abs:" + this.lookingForAll).contains("/FR/");
+                Predicate<Element> goodDomain = e -> e.attr("abs:" + this.lookingForAllAttr).contains(domain);
+                Predicate<Element> noEmail = e -> !e.attr("abs:" + this.lookingForAllAttr).contains("@");
+                Predicate<Element> noMP4 = e -> !e.attr("abs:" + this.lookingForAllAttr).contains(".mp4");
+                Predicate<Element> noJPG = e -> !e.attr("abs:" + this.lookingForAllAttr).contains(".jpg");
+                Predicate<Element> noPDF = e -> !e.attr("abs:" + this.lookingForAllAttr).contains(".pdf");
+                Predicate<Element> noEN = e -> !e.attr("abs:" + this.lookingForAllAttr).contains("/EN/");
+                Predicate<Element> noFR = e -> !e.attr("abs:" + this.lookingForAllAttr).contains("/FR/");
 
                 List<String> filtered = linksOnPage
                         .stream()
                         .distinct()
                         .filter(goodDomain.and(noEmail.and(noMP4).and(noJPG).and(noPDF).and(noEN).and(noFR)))
-                        .map(e -> e.attr("abs:" + this.lookingForAll))
+                        .map(e -> e.attr("abs:" + this.lookingForAllAttr))
                         .collect(Collectors.toList());
 
                 filtered = this.eliminateCovered(filtered, depth);
@@ -126,7 +127,7 @@ public class Crawler {
         try {
             URL newUrl = new URL(newLink);
 
-            if(newUrl.getHost().equals(startURL.getHost())){
+            if(newUrl.getHost().equals(domain)){
                 return true;
             }
             return false;
