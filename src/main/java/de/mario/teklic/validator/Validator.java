@@ -80,7 +80,6 @@ public class Validator {
         } else {
             System.out.println("No urls.");
         }
-
         return new Result(dataList, errorCount);
     }
 

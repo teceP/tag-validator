@@ -40,8 +40,9 @@ public class App {
         System.out.println("Validating...");
 
         Result result = validator.validate(testingArgs);
+        result.setDomain(new URL(urlArgs.get(URL)).getHost());
 
-        System.out.println("Finished.");
+        System.out.println("Finished. Found " + result.getDataList().size() + "." + System.lineSeparator() + result.getErrors() + " errors occured while trying to open documents by URLs.");
 
         if (result != null && result.getDataList().size() > 0) {
             System.out.println("Safing results now ...");

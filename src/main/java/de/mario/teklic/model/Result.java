@@ -4,13 +4,23 @@ import java.util.List;
 
 public class Result {
 
-    private List<Data> dataList;
+    private String domain;
 
     private int errors;
+
+    private List<Data> dataList;
 
     public Result(List<Data> dataList, int errors){
         this.dataList = dataList;
         this.errors = errors;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public List<Data> getDataList() {
