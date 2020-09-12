@@ -8,7 +8,7 @@ Example:
 The tag-validator has a crawler inside, which looks for all avaiable URLs on a website.
 The depth and the amount of pages is adjustable with arguments.
 
-#Example ini file for noopener norefferer: 
+# Example ini file for noopener norefferer: 
 ```
 [url]
 url:https://www.a.de/home.html
@@ -27,13 +27,13 @@ looking_Tag:a
 looking_Attr:href
 ```
 
-#Build program with maven
+# Build program with maven
 Run following in root directory
 `mvn clean compile assembly:single`
 
 validator-1.0-jar-with-dependencies.jar gets created in target directory
 
-#Run program
+# Run program
 You can run this program as follows:<br />
 * Change the arguments.ini file according to your needs
 * Navigate with your terminal to the directory where the arguments.ini and the validator-1.0-jar-with-dependencies.jar are
