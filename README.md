@@ -36,6 +36,7 @@ looking_Attr:href
 * depend_Val: When this value was found by the validator && depend_Tag && depend_Attr <br />
 ---------------------------------
 = then the validator will check if following two arguments are present:
+
 ---------------------------------
 * testing_Attr: Validator looks if this attribute is present or not.
 * testing_Val: Validator looks if this value is present or not.
