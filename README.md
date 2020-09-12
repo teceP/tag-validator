@@ -1,24 +1,37 @@
-# tag-validator
+#tag-validator
 
-Validates if attributes which depends on other attributes, are present or not.
+Validates whether attributes, which depends on other attributes, are present or not.
 
 Example:
 
-* \<a target="_blank"/>  ... for security reasons, there should be rel="noopener norefferer"
-* \<a target="_blank" rel="noopener norefferer"/>
+* `<a target="_blank"/>`  ... for security reasons, there should be rel="noopener norefferer"
+* `<a target="_blank" rel="noopener norefferer"/>`
 
 The tag-validator has a crawler inside, which looks for all avaiable URLs on a website.
 The depth and the amount of pages is adjustable with arguments.
 
-Example for noopener norefferer: 
-* "https://www.a.url/thema/topic/hello" a target "_blank" rel "noopener norefferer" 250 3 href
-* a = a-tag
-* target = looking for attribute
-* "_blank" = looking for value
-* rel = search for this attribute
-* "noopener norefferer" = search for this value
-* 0 = max pages
-* 3 = depth
-* href = all items of href
+#Example ini file for noopener norefferer: 
+```
+[url]
+url:https://www.a.de/home.html
+[depending]
+depend_Tag:a
+depend_Attr:target
+depend_Val:_blank
+[testing]
+testing_Attr:rel
+testing_Val:"noopener norefferer"
+[max]
+maxPages:500
+maxDepth:3
+[crawlFor]
+looking_Tag:a
+looking_Attr:href
+```
 
-At this time, the app only searches for a-tags and target attributes.
+#Run program
+You can run this program as follows:<br />
+* Change the arguments.ini file according to your needs
+* Navigate with your terminal to the directory where the arguments.ini and the validator.jar are
+* Run following command:
+`java -jar validator-0.9.jar arguments.ini`

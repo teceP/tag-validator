@@ -8,22 +8,22 @@ import org.ini4j.Profile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 
 import static de.mario.teklic.arguments.Arguments.*;
+import static de.mario.teklic.arguments.Profiles.*;
 
 public class App {
     public static void main(String[] args) throws IOException {
+        Ini config = new Ini(new File(args[0]));
 
-        Ini config = new Ini(new File("arguments.ini"));
-
-        Profile.Section urlArgs = config.get("url");
-        Profile.Section dependingArgs = config.get("depending");
-        Profile.Section testingArgs = config.get("testing");
-        Profile.Section maxArgs = config.get("max");
-        Profile.Section crawlForArgs = config.get("crawlFor");
+        Profile.Section urlArgs = config.get(URL_PROFILE);
+        Profile.Section dependingArgs = config.get(DEPENDING_PROFILE);
+        Profile.Section testingArgs = config.get(TESTING_PROFILE);
+        Profile.Section maxArgs = config.get(MAX_PROFILE);
+        Profile.Section crawlForArgs = config.get(CRAWL_PROFILE);
 
         printArguments(urlArgs, dependingArgs, testingArgs, maxArgs, crawlForArgs);
 
@@ -67,8 +67,17 @@ public class App {
             System.out.println("Max. pages: " + Integer.parseInt(maxArgs.get(MAX_PAGES)));
             System.out.println("Looking for all tags: " + crawlForArgs.get(LOOKING_FOR_TAG));
             System.out.println("Looking for all attributes: " + crawlForArgs.get(LOOKING_FOR_ATTR));
-        } catch (Exception e) {
-            System.out.println("Arguments needed.");
+        } catch (MalformedURLException e) {
+            if(urlArgs.get(URL) == null){
+                System.out.println("URL is null.");
+                e.printStackTrace();
+            }else{
+                System.err.println("URL '" + urlArgs.get(URL) + "' is not a valid url.");
+                e.printStackTrace();
+                System.exit(0);
+            }
+        } catch (Exception e){
+            System.err.println("Arguments needed.");
             printHelp();
             e.printStackTrace();
             System.exit(0);
@@ -79,10 +88,6 @@ public class App {
         System.out.println("todo help menu");
     }
 }
-
-/**
- * TODO: set max depth, max pages if not delivered
- */
 
 /**
  * TODO: depth of path only deeper-argument:
