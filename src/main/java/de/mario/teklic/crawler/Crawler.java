@@ -49,6 +49,7 @@ public class Crawler {
         }
 
         if (links.size() >= max && max != 0) {
+            System.out.println("Maximum pages exceeded (" + max + ").");
             return links;
         }
 
