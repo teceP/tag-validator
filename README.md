@@ -1,4 +1,4 @@
-#tag-validator
+# tag-validator
 Validates whether attributes, which depends on other attributes, are present or not.
 
 Example:
