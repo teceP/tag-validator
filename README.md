@@ -54,6 +54,7 @@ in this example 'europe', the crawler will remove all other articles about europ
 only article_0.<br />
 
 To get all pages and keep all articles of the same type, use -1 for maxDepth.
+Limit is for occurancies of a '/'.
 
 ---------------------------------
 Should be everytime `a` and `href`. This is the pair of where the crawler is looking for on a page, 
