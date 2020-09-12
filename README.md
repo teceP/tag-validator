@@ -1,9 +1,7 @@
 #tag-validator
-
 Validates whether attributes, which depends on other attributes, are present or not.
 
 Example:
-
 * `<a target="_blank"/>`  ... for security reasons, there should be rel="noopener norefferer"
 * `<a target="_blank" rel="noopener norefferer"/>`
 
@@ -29,9 +27,15 @@ looking_Tag:a
 looking_Attr:href
 ```
 
+#Build program with maven
+Run following in root directory
+`mvn clean compile assembly:single`
+
+validator-0.9-jar-with-dependencies.jar gets created in target directory
+
 #Run program
 You can run this program as follows:<br />
 * Change the arguments.ini file according to your needs
-* Navigate with your terminal to the directory where the arguments.ini and the validator.jar are
+* Navigate with your terminal to the directory where the arguments.ini and the validator-0.9-jar-with-dependencies.jar are
 * Run following command:
-`java -jar validator-0.9.jar arguments.ini`
+`java -jar validator-0.9-jar-with-dependencies.jar arguments.ini`
