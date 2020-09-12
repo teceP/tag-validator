@@ -6,7 +6,7 @@
 
     <groupId>de.init.mteklic</groupId>
     <artifactId>validator</artifactId>
-    <version>0.9</version>
+    <version>1.0</version>
 
     <properties>
         <java.version>8</java.version>
